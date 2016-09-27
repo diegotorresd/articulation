@@ -1,0 +1,74 @@
+<html>
+<head>
+  <title>ArtiCulatiOn</title>
+  <style media="screen">
+    body {
+      background-color: teal;
+      font-family: sans-serif;
+    }
+    .surface {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 600px;
+      height: 400px;
+      background-color: white;
+      cursor: crosshair;
+    }
+    .element {
+      position: relative;
+      top: 0px;
+      left: 0px;
+      width: 20px;
+      height: 20px;
+      background-color: black;
+    }
+  </style>
+  <script src="articulation.js" type="text/javascript"></script>
+  <script type="text/javascript" src="observerlist.js"></script>
+</head>
+<body>
+  <h2 id="position">Position</h2>
+  <h2 id="element-position">Element position</h2>
+  <a href="#" id="wiggle">wiggle</a>
+  <div class="surface">
+    <div class="element"></div>
+  </div>
+  <script type="text/javascript">
+    var surface = document.getElementsByClassName('surface')[0];
+    var position = document.getElementById('position');
+    var element_position = document.getElementById('element-position');
+    var wiggle = document.getElementById('wiggle');
+    var element = new Element(document.getElementsByClassName('element')[0]);
+
+    // Extend an object with an extension
+    function extend(obj, extension){
+      for (var key in extension){
+        obj[key] = extension[key];
+      }
+    }
+
+    extend(element, new Subject());
+    extend(element_position, new Observer());
+    element_position.update = function(pos) {
+      this.innerHTML = `x : ${pos.x}, y: ${pos.y}`;
+    };
+    element.addObserver(element_position);
+
+    surface.onmousemove = function(event) {
+      var pos = getEventPos(event);
+      position.innerHTML = `x : ${pos.x}, y: ${pos.y}`;
+    }
+    surface.onclick = function(event) {
+      var pos = getEventPos(event);
+      element.setPosition(pos);
+    }
+    wiggle.onclick = function(event) {
+      wiggle_size = Math.ceil(40 * Math.random() - 20);
+      var pos = element.getPosition();
+      element.setPosition({x : pos.x + wiggle_size,
+      y : pos.y + wiggle_size});
+    }
+  </script>
+</body>
+</html>
